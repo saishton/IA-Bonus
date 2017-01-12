@@ -2,7 +2,7 @@ function [] = model(nodes,runtime)
 
 preruntime = 1000;
 
-initial = rand(nodes)>0.995;
+initial = rand(nodes)>0.5;
 
 LNpara1 = lognrnd(1.1664E0,3.3155E-2,nodes);
 LNpara2 = lognrnd(-7.2487E-1,2.4700E-1,nodes);
@@ -31,7 +31,7 @@ for i=1:nodes-1
                         thisoff = [thisoff,runtime];
                     end
                 else
-                    thison = [thisoff,runtime];
+                    thison = [thison,runtime];
                 end
                 currenttime = switch_off;
             end
