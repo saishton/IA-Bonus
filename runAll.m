@@ -1,0 +1,26 @@
+% analyse('Primary','s12879-014-0695-9-s1-1A-T1.csv');
+% analyse('Primary','s12879-014-0695-9-s1-1A-T2.csv');
+% analyse('Primary','s12879-014-0695-9-s1-1B-T1.csv');
+% analyse('Primary','s12879-014-0695-9-s1-1B-T2.csv');
+% analyse('Primary','s12879-014-0695-9-s1-2A-T1.csv');
+% analyse('Primary','s12879-014-0695-9-s1-2A-T2.csv');
+% analyse('Primary','s12879-014-0695-9-s1-2B-T1.csv');
+% analyse('Primary','s12879-014-0695-9-s1-2B-T2.csv');
+% analyse('Primary','s12879-014-0695-9-s1-3A-T1.csv');
+% analyse('Primary','s12879-014-0695-9-s1-3A-T2.csv');
+% analyse('Primary','s12879-014-0695-9-s1-3B-T1.csv');
+% analyse('Primary','s12879-014-0695-9-s1-3B-T2.csv');
+analyse('Primary','s12879-014-0695-9-s1-4A-T1.csv');
+analyse('Primary','s12879-014-0695-9-s1-4A-T2.csv');
+analyse('Primary','s12879-014-0695-9-s1-4B-T1.csv');
+analyse('Primary','s12879-014-0695-9-s1-4B-T2.csv');
+analyse('Primary','s12879-014-0695-9-s1-5A-T1.csv');
+analyse('Primary','s12879-014-0695-9-s1-5A-T2.csv');
+analyse('Primary','s12879-014-0695-9-s1-5B-T1.csv');
+analyse('Primary','s12879-014-0695-9-s1-5B-T2.csv');
+
+analyse('Secondary','journal.pone.0136497.s002-T1.CSV');
+analyse('Secondary','journal.pone.0136497.s002-T2.CSV');
+analyse('Secondary','journal.pone.0136497.s002-T3.CSV');
+analyse('Secondary','journal.pone.0136497.s002-T4.CSV');
+analyse('Secondary','journal.pone.0136497.s002-T5.CSV');
