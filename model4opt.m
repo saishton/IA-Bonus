@@ -1,4 +1,4 @@
-function [] = model(nodes,runtime)
+function [datamatrix] = model4opt(nodes,runtime,ex1,ln1,ln2)
 
 cut = 20;
 
@@ -11,9 +11,9 @@ initial = zeros(nodes);
 %LNpara1 = lognrnd(1.1664E0,3.3155E-2,nodes);
 %LNpara2 = lognrnd(-7.2487E-1,2.4700E-1,nodes);
 %EXpara1 = lognrnd(3.5018E0,1.4879E-1,nodes);
-LNpara1 = 6.6106*ones(nodes);
-LNpara2 = 1.2887*ones(nodes);
-EXpara1 = 30.552*ones(nodes);
+LNpara1 = ln1*ones(nodes);
+LNpara2 = ln2*ones(nodes);
+EXpara1 = ex1*ones(nodes);
 
 ontimes = struct();
 offtimes = struct();
@@ -78,5 +78,5 @@ for i=1:nodes-1
         offtimes.(ID_ref) = thisoff;
     end
 end
-sampleCSV(ontimes,offtimes,nodes,runtime,cut);
+datamatrix = sampleCSV4opt(ontimes,offtimes,nodes,runtime,cut);
 end
