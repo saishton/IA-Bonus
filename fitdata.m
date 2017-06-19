@@ -1,74 +1,9 @@
-function [firsttimes,thisStructure] = firstswitch(input_folder,input_filename)
-
-timestamp = datestr(now,'yyyymmddTHHMMSS');
-structure = '%f %f %f %*s %*s';
-
-
-iF = ['input/',input_folder];
-oF = ['output_',timestamp];
-
-clean_input = strrep(input_filename, '.', '');
-dir_ref = [oF,'\',clean_input];
-mkdir(dir_ref);
-
-input = [iF,'/',input_filename];
-
-fid = fopen(input);
-rawdata = textscan(fid,structure,'Delimiter',',');
-fclose(fid);
-
-%==Extract and Clean Data==%
-data = cell2mat(rawdata);
-data(:,1) = data(:,1)-data(1,1);
-lowestID = min(min(data(:,2)),min(data(:,3)));
-data(:,2) = data(:,2)-lowestID+1;
-data(:,3) = data(:,3)-lowestID+1;
-number_rows = size(data,1);
-parfor i=1:number_rows
-    thisrow = data(i,:);
-    col2 = thisrow(1,2);
-    col3 = thisrow(1,3);
-    if col2 > col3
-        thisrow(1,2) = col3;
-        thisrow(1,3) = col2;
-        data(i,:) = thisrow;
-    end
-end
-all_IDs = [data(:,2); data(:,3)];
-all_active = unique(all_IDs);
-num_people = size(all_active,1);
-data2 = data(:,2);
-data3 = data(:,3);
-for i=1:num_people
-    oldID = all_active(i);
-    data2(data2==oldID) = -i;
-    data3(data3==oldID) = -i;
-end
-data(:,2) = -data2;
-data(:,3) = -data3;
-
-firstswitches = Inf*ones(num_people);
-for i=1:num_people
-    firstperson = data(data(:,2)==i,:);
-    for j=i+1:num_people
-        secondperson = firstperson(firstperson(:,3)==j,:);
-        if isempty(secondperson)
-            %Do Nothing
-        else
-            firstswitches(i,j) = secondperson(1,1);
-        end
-    end
-end
-
-tri = triu(ones(num_people),1);
-firsttimes = firstswitches(tri==1);
-firsttimes = firsttimes(~isinf(firsttimes));
-
-[F,X] = ecdf(firsttimes);
+function [thisStructure] = fitdata(data)
+[F,X] = ecdf(data);
 ccdf = 1-F;
-M1 = mean(firsttimes);
-M2 = mean(firsttimes.^2);
-M3 = mean(firsttimes.^3);
+M1 = mean(data);
+M2 = mean(data.^2);
+M3 = mean(data.^3);
 
 ex_lambda_start = M1;
 if ex_lambda_start<=0 || isnan(ex_lambda_start) || isinf(ex_lambda_start)
@@ -186,48 +121,31 @@ gp_theta = cv_gp(3);
 wb_a = cv_wb(1);
 wb_b = cv_wb(2);
 
-firstonfig = figure();
-hold on
-plot(X,ccdf);
-plot(X,expcdf(X,ex_lambda,'upper'));
-plot(X,gamcdf(X,gm_a,gm_b,'upper'));
-plot(X,raylcdf(X,rl_sigma,'upper'));
-plot(X,logncdf(X,ln_mu,ln_sigma,'upper'));
-plot(X,mlf(ml_beta,1,-ml_gamma*X.^ml_beta,6));
-plot(X,gpcdf(X,gp_k,gp_sigma,gp_theta,'upper'));
-plot(X,wblcdf(X,wb_a,wb_b,'upper'));
-xlabel('Time');
-ylabel('CCDF');
-legend('Data','Exponential','Gamma','Rayleigh','Log-Normal','Mittag-Leffler','Gen. Pareto','Weibull','Location','northeast');
-imagefilename = [dir_ref,'/firstontimes.png'];
-print(imagefilename,'-dpng')
-close(firstonfig);
+sortedon = sort(data)';
 
-sorted = sort(firsttimes);
+z_ex = expcdf(sortedon,ex_lambda);
+z_gm = gamcdf(sortedon,gm_a,gm_b);
+z_rl = raylcdf(sortedon,rl_sigma);
+z_ln = logncdf(sortedon,ln_mu,ln_sigma);
+z_ml = ones(length(sortedon),1)-mlf(ml_beta,1,-ml_gamma*sortedon.^ml_beta,6);
+z_gp = gpcdf(sortedon,gp_k,gp_sigma,gp_theta);
+z_wb = wblcdf(sortedon,wb_a,wb_b);
 
-z_ex = expcdf(sorted,ex_lambda);
-z_gm = gamcdf(sorted,gm_a,gm_b);
-z_rl = raylcdf(sorted,rl_sigma);
-z_ln = logncdf(sorted,ln_mu,ln_sigma);
-z_ml = ones(length(sorted),1)-mlf(ml_beta,1,-ml_gamma*sorted.^ml_beta,6);
-z_gp = gpcdf(sorted,gp_k,gp_sigma,gp_theta);
-z_wb = wblcdf(sorted,wb_a,wb_b);
+zp_ex = exppdf(sortedon,ex_lambda);
+zp_gm = gampdf(sortedon,gm_a,gm_b);
+zp_rl = raylpdf(sortedon,rl_sigma);
+zp_ln = lognpdf(sortedon,ln_mu,ln_sigma);
+zp_ml = (-ml_beta./sortedon).*mlf(ml_beta,1,-ml_gamma*sortedon.^ml_beta,6);
+zp_gp = gppdf(sortedon,gp_k,gp_sigma,gp_theta);
+zp_wb = wblpdf(sortedon,wb_a,wb_b);
 
-zp_ex = exppdf(sorted,ex_lambda);
-zp_gm = gampdf(sorted,gm_a,gm_b);
-zp_rl = raylpdf(sorted,rl_sigma);
-zp_ln = lognpdf(sorted,ln_mu,ln_sigma);
-zp_ml = (-ml_beta./sorted).*mlf(ml_beta,1,-ml_gamma*sorted.^ml_beta,6);
-zp_gp = gppdf(sorted,gp_k,gp_sigma,gp_theta);
-zp_wb = wblpdf(sorted,wb_a,wb_b);
-
-stats_ex = testStatistics(sorted,z_ex,zp_ex,20);
-stats_gm = testStatistics(sorted,z_gm,zp_gm,20);
-stats_rl = testStatistics(sorted,z_rl,zp_rl,20);
-stats_ln = testStatistics(sorted,z_ln,zp_ln,20);
-stats_ml = testStatistics(sorted,z_ml,zp_ml,20);
-stats_gp = testStatistics(sorted,z_gp,zp_gp,20);
-stats_wb = testStatistics(sorted,z_wb,zp_wb,20);
+stats_ex = testStatistics(sortedon,z_ex,zp_ex,20);
+stats_gm = testStatistics(sortedon,z_gm,zp_gm,20);
+stats_rl = testStatistics(sortedon,z_rl,zp_rl,20);
+stats_ln = testStatistics(sortedon,z_ln,zp_ln,20);
+stats_ml = testStatistics(sortedon,z_ml,zp_ml,20);
+stats_gp = testStatistics(sortedon,z_gp,zp_gp,20);
+stats_wb = testStatistics(sortedon,z_wb,zp_wb,20);
 
 struc_ex = struct('Scale',ex_lambda);
 struc_gm = struct('Shape',gm_a,'Scale',gm_b);
@@ -246,4 +164,24 @@ GP = struct('Parameters',struc_gp,'Statistics',stats_gp);
 WB = struct('Parameters',struc_wb,'Statistics',stats_wb);
 
 thisStructure = struct('Exponential',EX,'Gamma',GM,'Rayleigh',RL,'LogNormal',LN,'MittagLeffler',ML,'GenPareto',GP,'Weibull',WB);
-end
+
+ccdf_ex = expcdf(X,ex_lambda,'upper');
+ccdf_gm = gamcdf(X,gm_a,gm_b,'upper');
+ccdf_rl = raylcdf(X,rl_sigma,'upper');
+ccdf_ln = logncdf(X,ln_mu,ln_sigma,'upper');
+ccdf_ml = mlf(ml_beta,1,-ml_gamma*X.^ml_beta,6);
+ccdf_gp = gpcdf(X,gp_k,gp_sigma,gp_theta,'upper');
+ccdf_wb = wblcdf(X,wb_a,wb_b,'upper');
+
+graph = figure();
+hold on
+plot(X,ccdf,'x');
+%plot(X,ccdf_ex);
+%plot(X,ccdf_gm);
+%plot(X,ccdf_rl);
+plot(X,ccdf_ln);
+%plot(X,ccdf_gp);
+%plot(X,ccdf_wb);
+set(gca,'XScale','log');
+set(gca,'YScale','log');
+ylim([min(ccdf(1:end-1)),max(ccdf)]);

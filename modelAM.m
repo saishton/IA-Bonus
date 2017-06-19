@@ -1,35 +1,20 @@
-function [] = model(nodes,runtime)
+function [AdjMat] = modelAM(initMat,runtime)
 
-cut = 20;
+nodes = size(initMat,1);
 
-preruntime = 20*ones(nodes);
-switchon = exprnd(7384.5,nodes);
-startthings = switchon-preruntime;
-
-initial = zeros(nodes);
-
-ex1_mu = 3.2434; %LOCK
-%ln1_mu = 1.8887;
-%ln2_mu = 0;
-%ln1_mu = 1.6234;
-%ln2_mu = 0.5090;
-
-%LNpara1 = lognrnd(ln1_mu,sigma_for_mu_and_mean(6.6106,ln1_mu),nodes);
-%LNpara2 = lognrnd(ln2_mu,sigma_for_mu_and_mean(1.2887,ln2_mu),nodes);
+ex1_mu = 3.2434;
 EXpara1 = lognrnd(ex1_mu,sigma_for_mu_and_mean(30.552,ex1_mu),nodes);
 LNpara1 = 6.3512*ones(nodes);
 LNpara2 = 1.3688*ones(nodes);
-%EXpara1 = 30.552*ones(nodes);
 
-ontimes = struct();
-offtimes = struct();
+AdjMat = zeros(nodes);
 
 for i=1:nodes-1
     for j=i+1:nodes
-        init = initial(i,j);
-        currenttime = startthings(i,j);
+        init = initMat(i,j);
+        currenttime = 0;
         if init == 0
-            thisoff = [startthings(i,j)];
+            thisoff = [0];
             thison = [];
             while currenttime<runtime
                 thisoffduration = lognrnd(LNpara1(i,j),LNpara2(i,j));
@@ -50,7 +35,7 @@ for i=1:nodes-1
             end
         elseif init == 1
             thisoff = [];
-            thison = [startthings(i,j)];
+            thison = [0];
             while currenttime<runtime
                 thisonduration = exprnd(EXpara1(i,j));
                 switch_off = currenttime+thisonduration;
@@ -69,20 +54,21 @@ for i=1:nodes-1
                 currenttime = switch_on;
             end
         end
-        firstonIDX = find(thison>0,1);
-        firstoffIDX = find(thisoff>0,1);
-        firston = thison(firstonIDX);
-        firstoff = thisoff(firstoffIDX);
         thison(thison<0) = [];
         thisoff(thisoff<0) = [];
         thison(thison==runtime) = [];
-        if firston > firstoff
-            thison = [switchon(i,j),thison];
+        thisoff(thisoff==runtime) = [];
+        if isempty(thison)
+            %Do nothing
+        elseif isempty(thisoff)
+            AdjMat(i,j) = 1;
+            AdjMat(j,i) = 1;
+        elseif thison(end)>thisoff(end)
+            AdjMat(i,j) = 1;
+            AdjMat(j,i) = 1;
+        else
+            %Do nothing
         end
-        ID_ref = sprintf('n%d_n%d', i,j);
-        ontimes.(ID_ref) = thison;
-        offtimes.(ID_ref) = thisoff;
     end
 end
-sampleCSV(ontimes,offtimes,nodes,runtime,cut);
 end

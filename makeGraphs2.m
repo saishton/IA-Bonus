@@ -1,4 +1,4 @@
-function [stats] = makeGraphs(gen_data,real_data,variable,dir_ref)
+function [stats] = makeGraphs2(gen_data,real_data,variable,dir_ref,slice)
 
 cleanName = strrep(variable, '.', '');
 cleanName = strrep(cleanName, '-', '');
@@ -91,6 +91,6 @@ print(imagefilename2,'-dpng')
 hold off
 close(plotsomeofthethings);
 
-stats = testStatistics2(gen_all,real_all);
+stats = testStatistics2(gen_all,real_all,slice);
 
 end

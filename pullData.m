@@ -196,6 +196,7 @@ dataStructure.ComponentNodes_data = compSizes;
 
 %Global Clustering Coefficient
 clustering = zeros(1,num_times);
+triangles = zeros(1,num_times);
 
 parfor m=1:num_times
     thisadj = zeros(num_people);
@@ -218,10 +219,12 @@ parfor m=1:num_times
     else
         clustering(m) = trace(adj3)/contrip;
     end
+    triangles(m) = trace(adj3)/6;
 end
 
 clustering(clustering==0) = [];
 dataStructure.Clustering_data = clustering;
+dataStructure.Triangles_data = triangles;
 
 %Interaction Times
 times = zeros(1,number_rows);

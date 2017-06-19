@@ -32,6 +32,7 @@ for i=1:length(GfileList)
     GClustering.(currentClean) = currentData.Clustering_data;
     GComponentNodes.(currentClean) = currentData.ComponentNodes_data;
     GComponentEdges.(currentClean) = currentData.ComponentEdges_data;
+    GTriangles.(currentClean) = currentData.Triangles_data;
 end
 
 for i=1:length(RfileList)
@@ -49,14 +50,16 @@ for i=1:length(RfileList)
     RClustering.(currentClean) = currentData.Clustering_data;
     RComponentNodes.(currentClean) = currentData.ComponentNodes_data;
     RComponentEdges.(currentClean) = currentData.ComponentEdges_data;
+    RTriangles.(currentClean) = currentData.Triangles_data;
 end
 
-makeGraphs(GActiveLinks,RActiveLinks,'Active Links',dir_ref);
-makeGraphs(GInteractionTimes,RInteractionTimes,'Interaction Times',dir_ref);
-makeGraphs(GActivityPotential,RActivityPotential,'Activity Potential',dir_ref);
-makeGraphs(GNoContactTimes,RNoContactTimes,'Time between Contacts',dir_ref);
-makeGraphs(GNodesActive,RNodesActive,'Active Nodes',dir_ref);
-makeGraphs(GComponents,RComponents,'Number of Components',dir_ref);
-makeGraphs(GClustering,RClustering,'Clustering Coefficient',dir_ref);
-makeGraphs(GComponentNodes,RComponentNodes,'Nodes per Component',dir_ref);
-makeGraphs(GComponentEdges,RComponentEdges,'Links per Component',dir_ref);
+ActiveLinkStats = makeGraphs2(GActiveLinks,RActiveLinks,'Active Links',dir_ref,0.0001);
+OnTimesStats = makeGraphs2(GInteractionTimes,RInteractionTimes,'Interaction Times',dir_ref,20);
+ActivityPotStats = makeGraphs2(GActivityPotential,RActivityPotential,'Activity Potential',dir_ref,0.0001);
+OffTimesStats = makeGraphs2(GNoContactTimes,RNoContactTimes,'Time between Contacts',dir_ref,20);
+ActiveNodesStats = makeGraphs2(GNodesActive,RNodesActive,'Active Nodes',dir_ref,0.0001);
+CompCountStats = makeGraphs2(GComponents,RComponents,'Number of Components',dir_ref,1);
+GCCStats = makeGraphs2(GClustering,RClustering,'Clustering Coefficient',dir_ref,0.0001);
+CompNodesStats = makeGraphs2(GComponentNodes,RComponentNodes,'Nodes per Component',dir_ref,0.0001);
+CompEdgesStats = makeGraphs2(GComponentEdges,RComponentEdges,'Links per Component',dir_ref,0.0001);
+TriangleCountStats = makeGraphs2(GTriangles,RTriangles,'Number of Triangles',dir_ref,1);

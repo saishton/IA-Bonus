@@ -1,4 +1,4 @@
-function [] = model(nodes,runtime)
+function [datamatrix] = model4fullopt(nodes,runtime,change)
 
 cut = 20;
 
@@ -8,17 +8,15 @@ startthings = switchon-preruntime;
 
 initial = zeros(nodes);
 
-ex1_mu = 3.2434; %LOCK
-%ln1_mu = 1.8887;
-%ln2_mu = 0;
-%ln1_mu = 1.6234;
-%ln2_mu = 0.5090;
+ex1_mu = change;
+ln1_mu = 1.8887;
+ln2_mu = 0.2536;
 
 %LNpara1 = lognrnd(ln1_mu,sigma_for_mu_and_mean(6.6106,ln1_mu),nodes);
 %LNpara2 = lognrnd(ln2_mu,sigma_for_mu_and_mean(1.2887,ln2_mu),nodes);
 EXpara1 = lognrnd(ex1_mu,sigma_for_mu_and_mean(30.552,ex1_mu),nodes);
-LNpara1 = 6.3512*ones(nodes);
-LNpara2 = 1.3688*ones(nodes);
+LNpara1 = 6.6106*ones(nodes);
+LNpara2 = 1.2887*ones(nodes);
 %EXpara1 = 30.552*ones(nodes);
 
 ontimes = struct();
@@ -84,5 +82,5 @@ for i=1:nodes-1
         offtimes.(ID_ref) = thisoff;
     end
 end
-sampleCSV(ontimes,offtimes,nodes,runtime,cut);
+datamatrix = sampleCSV4opt(ontimes,offtimes,nodes,runtime,cut);
 end

@@ -506,7 +506,7 @@ for i = 1:numel(fields_off)
     analysis_off.(fields_off{i}) = thisStructure;
 end
 
-onoff2latex(analysis_on,dir_ref,'OnDistributions');
-onoff2latex(analysis_off,dir_ref,'OffDistributions');
+onoff2latex(analysis_on,dir_ref,'OnDistributions','On');
+onoff2latex(analysis_off,dir_ref,'OffDistributions','Off');
 
 end

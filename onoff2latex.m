@@ -1,4 +1,4 @@
-function [] = onoff2latex(analysis,dir_ref,name)
+function [] = onoff2latex(analysis,dir_ref,name,state)
 
 [ssum,avrank] = statSum(analysis);
 
@@ -126,7 +126,7 @@ GP_build{samples+prebonus+3} = '\newpage';
 WB_build{samples+prebonus+3} = '\newpage';
 
 comp_build = cell(22,1);
-comp_build{1} = '\subsection{Results: Comparison of Stats}';
+comp_build{1} = ['\subsubsection{',state,' Distributions: Sum of Statistics}'];
 comp_build{2} = '\begin{tabular}{|c||c|c|c|c|c|c|c|} \hline';
 comp_build{3} = ['\rotatebox[origin=c]{90}{Distribution} ',stat_string];
 comp_build{4} = ['\textbf{Exponential} & ',num2matlabstr(ssum(1,1)),' & ',num2matlabstr(ssum(1,2)),' & ',num2matlabstr(ssum(1,3)),' & ',num2matlabstr(ssum(1,4)),' & ',num2matlabstr(ssum(1,5)),' & ',num2matlabstr(ssum(1,6)),' & ',num2matlabstr(ssum(1,7)),'\\ \hline'];
@@ -137,7 +137,7 @@ comp_build{8} = ['\textbf{Mittag-Leffler} & ',num2matlabstr(ssum(5,1)),' & ',num
 comp_build{9} = ['\textbf{Generalised Pareto} & ',num2matlabstr(ssum(6,1)),' & ',num2matlabstr(ssum(6,2)),' & ',num2matlabstr(ssum(6,3)),' & ',num2matlabstr(ssum(6,4)),' & ',num2matlabstr(ssum(6,5)),' & ',num2matlabstr(ssum(6,6)),' & ',num2matlabstr(ssum(6,7)),'\\ \hline'];
 comp_build{10} = ['\textbf{Weibull} & ',num2matlabstr(ssum(7,1)),' & ',num2matlabstr(ssum(7,2)),' & ',num2matlabstr(ssum(7,3)),' & ',num2matlabstr(ssum(7,4)),' & ',num2matlabstr(ssum(7,5)),' & ',num2matlabstr(ssum(7,6)),' & ',num2matlabstr(ssum(7,7)),'\\ \hline'];
 comp_build{11} = '\end{tabular}';
-comp_build{12} = '\subsection{Results: Comparison of Average Rank}';
+comp_build{12} = ['\subsubsection{',state,' Distributions: Average Rank}'];
 comp_build{13} = '\begin{tabular}{|c||c|c|c|c|c|c|c|} \hline';
 comp_build{14} = ['\rotatebox[origin=c]{90}{Distribution} ',stat_string];
 comp_build{15} = ['\textbf{Exponential} & ',num2matlabstr(avrank(1,1)),' & ',num2matlabstr(avrank(1,2)),' & ',num2matlabstr(avrank(1,3)),' & ',num2matlabstr(avrank(1,4)),' & ',num2matlabstr(avrank(1,5)),' & ',num2matlabstr(avrank(1,6)),' & ',num2matlabstr(avrank(1,7)),'\\ \hline'];
